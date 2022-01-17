@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using LedMatrix.Models;
+using System.Drawing;
 
 namespace LedMatrix.Helpers
 {
@@ -121,6 +122,18 @@ namespace LedMatrix.Helpers
                 frame.Add(this.Next());
             }
             return frame;
+        }
+
+        public List<Pixel> NextPixelFrame()
+        {
+            var pixels = new List<Pixel>();
+            for (int i = 0; i < Constants.TotalLeds; i++)
+            {
+                var pixel = new Pixel(i);
+                pixel.Color = this.Next();
+                pixels.Add(pixel);
+            }
+            return pixels;
         }
     }
 }

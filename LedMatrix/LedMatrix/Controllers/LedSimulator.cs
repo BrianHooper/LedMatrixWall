@@ -1,25 +1,29 @@
 ﻿using LedMatrix.Helpers;
+using LedMatrix.Models;
 using System.Collections.Concurrent;
-using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 
 namespace LedMatrix.Controllers
 {
     public class LedSimulator : IControllerBase
     {
-        private BlockingCollection<List<Color>> frameQueue;
+        private BlockingCollection<List<Pixel>> frameQueue;
         private CancellationTokenSource cancellationTokenSource;
+        private bool disableProgramStart;
 
-        public LedSimulator()
+        public LedSimulator(bool disableProgramStart = false)
         {
+            this.disableProgramStart = disableProgramStart;
             this.cancellationTokenSource = new CancellationTokenSource();
-            this.frameQueue = new BlockingCollection<List<Color>>(new ConcurrentBag<List<Color>>(), 1000);
+            this.frameQueue = new BlockingCollection<List<Pixel>>(new ConcurrentBag<List<Pixel>>(), 1000);
             Thread t = new Thread(() => StartSimulator(this.cancellationTokenSource.Token));
             t.Start();
-            Console.WriteLine("Waiting for simulator to start");
-            Thread.Sleep(5000);
+            if (!disableProgramStart)
+            {
+                Console.WriteLine("Waiting for simulator to start");
+                Thread.Sleep(2000);
+            }
         }
 
         public void Clear()
@@ -27,7 +31,7 @@ namespace LedMatrix.Controllers
             throw new NotImplementedException();
         }
 
-        public void Paint(List<Color> pixels)
+        public void Paint(List<Pixel> pixels)
         {
             this.frameQueue.Add(pixels);
         }
@@ -39,12 +43,19 @@ namespace LedMatrix.Controllers
 
         private void StartSimulator(CancellationToken ct)
         {
-            using (System.Diagnostics.Process pProcess = new System.Diagnostics.Process())
+            if (disableProgramStart)
             {
-                pProcess.StartInfo.FileName = Constants.ExecutablePath;
-                pProcess.Start();
                 StartClient(ct);
-                pProcess.Close();
+            }
+            else
+            {
+                using (System.Diagnostics.Process pProcess = new System.Diagnostics.Process())
+                {
+                    pProcess.StartInfo.FileName = Constants.ExecutablePath;
+                    pProcess.Start();
+                    StartClient(ct);
+                    pProcess.Close();
+                }
             }
         }
 
@@ -66,7 +77,11 @@ namespace LedMatrix.Controllers
                     {
                         if (this.frameQueue.TryTake(out var frame, 50, ct))
                         {
-                            byte[] data = Utility.EncodeColorList(frame);
+
+                            byte[] data = Utility.EncodePixels(frame);
+
+                            //var encodedLength = string.Join(", ", data.Take(4));
+                            //Console.WriteLine($"Sending data packet with {frame.Count()} pixels: [{encodedLength}]");
                             sender.Send(data);
                         }
                     }

@@ -9,12 +9,16 @@ namespace LedMatrix.Helpers
         public const int LedColumnsPerNode = 7;
         public const int LedRowsPerNode = 7;
 
-        public const int TotalNodes = NodesPerRow * NodesPerColumn;
-        public const int LedsPerNode = LedColumnsPerNode * LedRowsPerNode;
-        public const int TotalLeds = TotalNodes * LedsPerNode;
+        public const int TotalNodes = NodesPerRow * NodesPerColumn; // 20
+        public const int LedsPerNode = LedColumnsPerNode * LedRowsPerNode; // 49
+        public const int LedsPerPanelRow = LedsPerNode * NodesPerRow; // 245
+        public const int LedsPerRow = LedColumnsPerNode * NodesPerRow; // 35
+        public const int LedsPerColumn = LedRowsPerNode * NodesPerColumn; // 28
+
+        public const int TotalLeds = TotalNodes * LedsPerNode; // 980
 
         // Simulator
-        public const string ExecutablePath = @"C:\Users\brian\Documents\code\LedMatrixWall\LedMatrix\LedSimulator\bin\Release\net6.0-windows\LedSimulator.exe";
+        public const string ExecutablePath = @"C:\Users\brian\Documents\code\LedMatrixWall\LedMatrix\LedSimulator\bin\Debug\net6.0-windows\LedSimulator.exe";
         public const int PixelDiameter = 25;
         public const int PixelSpacing = 5;
         public const int PixelWithSpacing = PixelDiameter + PixelSpacing;
@@ -24,5 +28,6 @@ namespace LedMatrix.Helpers
         public const int ServerPort = 11113; 
         public const int FramesPerSecond = 20;
         public const int MsPerFrame = 1000 / FramesPerSecond;
+        public const int DataPacketByteSize = 8192;
     }
 }

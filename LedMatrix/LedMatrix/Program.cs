@@ -1,34 +1,21 @@
 ﻿using LedMatrix.Controllers;
 using LedMatrix.Helpers;
+using LedMatrix.Models;
 
 namespace LedMatrix
 {
     public class Program
     {
-        private IControllerBase ledController;
-
-        private void ShowColorLoop()
-        {
-            var colorLoop = new ColorLoop();
-            for (int i = 0; i < 100; i++)
-            {
-                var frame = colorLoop.NextFrame();
-                this.ledController.Paint(frame);
-                Thread.Sleep(50);
-            }
-        }
-
-        public void Run()
-        {
-            this.ledController = new LedSimulator();
-            ShowColorLoop();
-            Thread.Sleep(10000);
-            ShowColorLoop();
-        }
-
         static void Main(string[] args)
         {
-            new Program().Run();
+            //var pixel = new Pixel(3, 4, 6, 6);
+            Start();
+        }
+
+        private static void Start()
+        {
+            IControllerBase controller = Environment.OSVersion.Platform == PlatformID.Win32NT ? new LedSimulator(false) : new LedController();
+            new ProgramRunner(controller).Run();
         }
     }
 }

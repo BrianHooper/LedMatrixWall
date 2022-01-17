@@ -2,13 +2,14 @@ using System.Windows.Forms;
 using System.Collections.Concurrent;
 using LedMatrix.Helpers;
 using System.Diagnostics;
+using LedMatrix.Models;
 
 namespace LedSimulator
 {
     public partial class FrameRenderer : Form
     {
-        private FixedSizedQueue<List<Color>> pixelQueue { get; set; }
-        private List<Color> pixels;
+        private FixedSizedQueue<List<Pixel>> pixelQueue { get; set; }
+        private List<Pixel> pixels;
         private StringFormat stringFormat;
 
         public FrameRenderer()
@@ -16,8 +17,8 @@ namespace LedSimulator
             InitializeComponent();
             this.Show();
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.pixelQueue = new FixedSizedQueue<List<Color>>(Constants.PixelBufferQueueLimit);
-            this.pixels = new List<Color>();
+            this.pixelQueue = new FixedSizedQueue<List<Pixel>>(Constants.PixelBufferQueueLimit);
+            this.pixels = new List<Pixel>();
 
             this.stringFormat = new StringFormat()
             {
@@ -31,7 +32,7 @@ namespace LedSimulator
             timer.Start();
         }
 
-        public void SendFrame(List<Color> pixels)
+        public void SendFrame(List<Pixel> pixels)
         {
             this.pixelQueue.Enqueue(pixels);
         }
@@ -48,12 +49,12 @@ namespace LedSimulator
                 {
                     for (int i = 0; i < pixels.Count; i++)
                     {
-                        var color = pixels[i];
-                        var location = Utility.GetPixelLocation(i);
+                        var pixel = pixels[i];
+                        var location = pixel.GetPixelLocation();
                         var boundingRectangle = new Rectangle(location.X, location.Y, Constants.PixelDiameter, Constants.PixelDiameter);
-                        f.Color = pixels[i];
+                        f.Color = pixel.Color;
                         e.Graphics.FillRectangle(f, boundingRectangle);
-                        //e.Graphics.DrawString((i + 1).ToString(), Font, t, boundingRectangle, stringFormat);
+                        //e.Graphics.DrawString((i).ToString(), Font, t, boundingRectangle, stringFormat);
                     }
                 }
             }

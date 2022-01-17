@@ -1,32 +1,30 @@
-﻿using System.Drawing;
+﻿using LedMatrix.Models;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 namespace LedMatrix.Helpers
 {
     public class Utility
     {
-        public static (int PanelRow, int PanelCol, int NodeRow, int NodeCol) GetPanelLocation(int index)
+        public static byte[] EncodePixels(List<Pixel> pixels)
         {
-            var panelIndex = index / Constants.LedsPerNode;
-            var panelRow = panelIndex / Constants.NodesPerRow;
-            var panelCol = panelIndex % Constants.NodesPerRow;
-
-            var nodeIndex = index % Constants.LedsPerNode;
-            var nodeRow = nodeIndex / Constants.LedRowsPerNode;
-            var nodeCol = nodeIndex % Constants.LedRowsPerNode;
-
-            return (panelRow, panelCol, nodeRow, nodeCol);
+            var data = new List<byte>();
+            data.AddRange(BitConverter.GetBytes(-pixels.Count()).ToList());
+            data.AddRange(pixels.SelectMany(p => p.EncodeAsByte()));
+            return data.ToArray();
         }
 
-        public static (int X, int Y) GetPixelLocation(int index)
+        public static List<Pixel> DecodePixels(byte[] data)
         {
-            var panelLocation = GetPanelLocation(index);
-
-            var panelStartX = panelLocation.PanelCol * Constants.PanelPixelWidth;
-            var panelStartY = panelLocation.PanelRow * Constants.PanelPixelHeight;
-
-            var x = panelStartX + (panelLocation.NodeCol * Constants.PixelWithSpacing);
-            var y = panelStartY + (panelLocation.NodeRow * Constants.PixelWithSpacing);
-            return (x, y);
+            var length = -BitConverter.ToInt32(data.Take(4).ToArray());
+            var pixels = new List<Pixel>();
+            var dataSize = length * 8 + 4;
+            for (int i = 4; i < dataSize; i += 8)
+            {
+                pixels.Add(new Pixel(data, i));
+            }
+            return pixels;
         }
 
         public static byte[] EncodeColorList(List<Color> colors)
@@ -55,6 +53,46 @@ namespace LedMatrix.Helpers
             
 
             return colors;
+        }
+
+        public static List<Pixel> ConvertFromImage(string filename)
+        {
+            var image = Image.FromFile(filename);
+            var width = Constants.LedsPerRow;
+            var height = Constants.LedsPerColumn;
+
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            var pixels = new List<Pixel>();
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    var pixel = new Pixel(x, y);
+                    Console.WriteLine($"[{x}, {y}]: {pixel.Index}");
+                    pixel.Color = destImage.GetPixel(x, y);
+                    pixels.Add(pixel);
+                }
+            }
+            return pixels;
         }
     }
 }

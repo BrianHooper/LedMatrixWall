@@ -38,11 +38,7 @@ namespace LedSimulator
             var colorLoop = new ColorLoop();
             while (!ct.IsCancellationRequested)
             {
-                var pixels = new List<Color>();
-                for (int i = 0; i < Constants.TotalLeds; i++)
-                {
-                    pixels.Add(colorLoop.Next());
-                }
+                var pixels = colorLoop.NextPixelFrame();
                 renderer.SendFrame(pixels);
                 Thread.Sleep(msPerFrame);
             }
@@ -55,8 +51,6 @@ namespace LedSimulator
             IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Constants.ServerPort);
             var listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-            byte[] bytes = new Byte[4096];
-
             try
             {
                 listener.Bind(localEndPoint);
@@ -64,21 +58,26 @@ namespace LedSimulator
                 Debug.WriteLine("Waiting for a connection...");
                 Socket handler = listener.Accept();
 
+                byte[] bytes = new Byte[2 * Constants.DataPacketByteSize];
+                List<byte> recievedData = new List<byte>();
                 while (!ct.IsCancellationRequested)
                 {
-                    var data = string.Empty;
-                    while (!ct.IsCancellationRequested)
+                    int bytesRec = handler.Receive(bytes);
+                    if (bytesRec > 0)
                     {
-                        int bytesRec = handler.Receive(bytes);
-                        if (bytesRec > 0)
+                        recievedData.AddRange(bytes);
+                        var decodedLength = BitConverter.ToInt32(bytes.Take(4).ToArray());
+                        if (decodedLength == -Constants.TotalLeds)
                         {
-                            var pixels = Utility.DecodeColorList(bytes);
+                            var pixels = Utility.DecodePixels(recievedData.ToArray());
                             if (pixels != null)
                             {
                                 renderer.SendFrame(pixels);
                             }
+                            recievedData.Clear();
                         }
                     }
+                    
                 }
 
                 handler.Shutdown(SocketShutdown.Both);

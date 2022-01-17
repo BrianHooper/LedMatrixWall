@@ -3,6 +3,7 @@ using System.Drawing;
 using Iot.Device.Graphics;
 using Iot.Device.Ws28xx;
 using LedMatrix.Helpers;
+using LedMatrix.Models;
 
 namespace LedMatrix
 {
@@ -38,7 +39,7 @@ namespace LedMatrix
             this.ledDevice.Update();
         }
 
-        public void Paint(List<Color> pixels)
+        public void Paint(List<Pixel> pixels)
         {
             if (pixels?.Count() != Constants.TotalLeds)
             {
@@ -47,7 +48,8 @@ namespace LedMatrix
 
             for(int i = 0; i < Constants.TotalLeds; i++)
             {
-                this.deviceImage.SetPixel(i, 0, pixels[i]);
+                var pixel = pixels[i];
+                this.deviceImage.SetPixel(pixel.Index, 0, pixel.Color);
             }
             this.ledDevice.Update();
         }

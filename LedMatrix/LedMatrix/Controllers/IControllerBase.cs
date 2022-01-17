@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using LedMatrix.Models;
 
 namespace LedMatrix
 {
@@ -6,6 +6,6 @@ namespace LedMatrix
     {
         public abstract void Clear();
 
-        public abstract void Paint(List<Color> pixels);
+        public abstract void Paint(List<Pixel> pixels);
     }
 }
