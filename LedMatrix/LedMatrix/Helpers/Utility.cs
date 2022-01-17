@@ -87,7 +87,6 @@ namespace LedMatrix.Helpers
                 for (int y = 0; y < height; y++)
                 {
                     var pixel = new Pixel(x, y);
-                    Console.WriteLine($"[{x}, {y}]: {pixel.Index}");
                     pixel.Color = destImage.GetPixel(x, y);
                     pixels.Add(pixel);
                 }

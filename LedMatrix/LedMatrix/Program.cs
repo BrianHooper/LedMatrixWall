@@ -14,7 +14,7 @@ namespace LedMatrix
 
         private static void Start()
         {
-            IControllerBase controller = Environment.OSVersion.Platform == PlatformID.Win32NT ? new LedSimulator(false) : new LedController();
+            ControllerBase controller = Environment.OSVersion.Platform == PlatformID.Win32NT ? new LedSimulator(false) : new LedController();
             new ProgramRunner(controller).Run();
         }
     }

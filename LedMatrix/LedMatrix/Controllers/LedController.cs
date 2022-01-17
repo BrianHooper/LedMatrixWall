@@ -7,12 +7,12 @@ using LedMatrix.Models;
 
 namespace LedMatrix
 {
-    public class LedController : IControllerBase
+    public class LedController : ControllerBase
     {
         private Ws2812b ledDevice;
         private BitmapImage deviceImage;
 
-        public LedController()
+        public LedController() : base()
         {
             var settings = new SpiConnectionSettings(0, 0)
             {
@@ -28,9 +28,10 @@ namespace LedMatrix
 
             this.ledDevice = new Ws2812b(spi, Constants.TotalLeds);
             this.deviceImage = this.ledDevice.Image;
+            this.isActive = true;
         }
 
-        public void Clear()
+        public override void Clear()
         {
             for(int i = 0; i < Constants.TotalLeds; i++)
             {
@@ -39,17 +40,20 @@ namespace LedMatrix
             this.ledDevice.Update();
         }
 
-        public void Paint(List<Pixel> pixels)
+        protected override void SendFrame(List<Pixel> frame)
         {
-            if (pixels?.Count() != Constants.TotalLeds)
+            if (frame?.Count() != Constants.TotalLeds)
             {
-                throw new ArgumentException($"Error, expected {Constants.TotalLeds} pixels, got {pixels?.Count()}");
+                throw new ArgumentException($"Error, expected {Constants.TotalLeds} pixels, got {frame?.Count()}");
             }
 
-            for(int i = 0; i < Constants.TotalLeds; i++)
+            for (int i = 0; i < Constants.TotalLeds; i++)
             {
-                var pixel = pixels[i];
-                this.deviceImage.SetPixel(pixel.Index, 0, pixel.Color);
+                var pixel = frame[i];
+                if (pixel != null)
+                {
+                    this.deviceImage.SetPixel(pixel.Index, 0, pixel.Color);
+                }
             }
             this.ledDevice.Update();
         }

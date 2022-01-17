@@ -4,17 +4,17 @@ namespace LedMatrix
 {
     public class ProgramRunner
     {
-        private IControllerBase controller;
+        private ControllerBase controller;
 
-        public ProgramRunner(IControllerBase controller)
+        public ProgramRunner(ControllerBase controller)
         {
             this.controller = controller;
         }
 
         public void Run()
         {
-            ShowImage();
-            //ShowColorLoop();
+            //ShowImage();
+            ShowColorLoop();
         }
 
         private void ShowImage()
@@ -26,7 +26,7 @@ namespace LedMatrix
         private void ShowColorLoop()
         {
             var colorLoop = new ColorLoop();
-            for (int i = 0; i < 100; i++)
+            while (controller.IsActive())
             {
                 var frame = colorLoop.NextPixelFrame();
                 this.controller.Paint(frame);

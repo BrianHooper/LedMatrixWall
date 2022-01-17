@@ -19,11 +19,6 @@ namespace LedMatrix.Models
 
         public Pixel(int x, int y)
         {
-            if (x == 14 && y == 10)
-            {
-                Console.WriteLine();
-            }
-
             var panelRow = y / Constants.LedRowsPerNode;
             var panelColumn = x / Constants.LedColumnsPerNode;
             var nodeRow = y % Constants.LedRowsPerNode;

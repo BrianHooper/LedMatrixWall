@@ -17,10 +17,13 @@ namespace LedMatrix.Helpers
 
         public const int TotalLeds = TotalNodes * LedsPerNode; // 980
 
+        public const int FrameBufferMaxSize = 1000;
+        public const int FrameBufferWaitMs = 30;
+
         // Simulator
         public const string ExecutablePath = @"C:\Users\brian\Documents\code\LedMatrixWall\LedMatrix\LedSimulator\bin\Debug\net6.0-windows\LedSimulator.exe";
-        public const int PixelDiameter = 25;
-        public const int PixelSpacing = 5;
+        public const int PixelDiameter = 20;
+        public const int PixelSpacing = 7;
         public const int PixelWithSpacing = PixelDiameter + PixelSpacing;
         public const int PanelPixelWidth = LedColumnsPerNode * (PixelDiameter + PixelSpacing);
         public const int PanelPixelHeight = LedRowsPerNode * (PixelDiameter + PixelSpacing);
