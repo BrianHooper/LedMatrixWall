@@ -31,15 +31,6 @@ namespace LedMatrix
             this.isActive = true;
         }
 
-        public override void Clear()
-        {
-            for(int i = 0; i < Constants.TotalLeds; i++)
-            {
-                this.deviceImage.SetPixel(i, 0, Color.Black);
-            }
-            this.ledDevice.Update();
-        }
-
         protected override void SendFrame(List<Pixel> frame)
         {
             if (frame?.Count() != Constants.TotalLeds)
@@ -47,13 +38,9 @@ namespace LedMatrix
                 throw new ArgumentException($"Error, expected {Constants.TotalLeds} pixels, got {frame?.Count()}");
             }
 
-            for (int i = 0; i < Constants.TotalLeds; i++)
+            foreach (var pixel in frame)
             {
-                var pixel = frame[i];
-                if (pixel != null)
-                {
-                    this.deviceImage.SetPixel(pixel.Index, 0, pixel.Color);
-                }
+                this.deviceImage.SetPixel(pixel.Index, 0, pixel.Color);
             }
             this.ledDevice.Update();
         }

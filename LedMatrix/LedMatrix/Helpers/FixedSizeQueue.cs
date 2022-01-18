@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace LedSimulator
+namespace LedMatrix.Helpers
 {
     public class FixedSizedQueue<T> : ConcurrentQueue<T>
     {

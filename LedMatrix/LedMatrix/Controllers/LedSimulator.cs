@@ -27,11 +27,6 @@ namespace LedMatrix.Controllers
             }
         }
 
-        public override void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
         private void StartSimulator()
         {
             if (!disableProgramStart)

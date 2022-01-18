@@ -1,49 +1,49 @@
 ﻿using LedMatrix.Helpers;
 using LedMatrix.Models;
 using System.Collections.Concurrent;
+using System.Drawing;
 
 namespace LedMatrix
 {
     public abstract class ControllerBase
     {
-        protected BlockingCollection<List<Pixel>> frameBuffer;
-        private CancellationTokenSource cancellationTokenSource;
         protected bool isActive;
+
+        private FixedSizedQueue<List<Pixel>> frameQueue;
+        private System.Timers.Timer frameTimer;
 
         protected ControllerBase()
         {
-            this.frameBuffer = new BlockingCollection<List<Pixel>>(new ConcurrentBag<List<Pixel>>(), Constants.FrameBufferMaxSize);
-            this.cancellationTokenSource = new CancellationTokenSource();
-            Thread t2 = new Thread(() => ProcessFrames(this.cancellationTokenSource.Token));
-            t2.Start();
+            this.frameQueue = new FixedSizedQueue<List<Pixel>>(Constants.PixelBufferQueueLimit);
+            
+            this.frameTimer = new System.Timers.Timer();
+            this.frameTimer.Interval = Constants.MsPerFrame;
+            this.frameTimer.Elapsed += ProcessFrame;
+            this.frameTimer.Enabled = true;
         }
 
-        protected abstract void SendFrame(List<Pixel> frame);
+        protected abstract void SendFrame(List<Pixel> pixels);
 
-        public abstract void Clear();
-
-        private void ProcessFrames(CancellationToken ct)
+        public void Clear()
         {
-            while (!ct.IsCancellationRequested)
+            var blankPixels = new List<Pixel>();
+            for(int i = 0; i < Constants.TotalLeds; i++)
             {
-                try
-                {
-                    if (this.isActive && this.frameBuffer.TryTake(out var frame, 50, ct))
-                    {
-                        this.SendFrame(frame);
-                        Thread.Sleep(Constants.FrameBufferWaitMs);
-                    }
-                }
-                catch (OperationCanceledException)
-                {
+                blankPixels.Add(new Pixel(i, Color.Black));
+            }
+            this.SendFrame(blankPixels);
+        }
 
-                }
+        private void ProcessFrame(Object? source, System.Timers.ElapsedEventArgs e)
+        {
+            if (this.IsActive() && this.frameQueue?.TryDequeue(out var frame) == true)
+            {
+                this.SendFrame(frame);
             }
         }
 
         protected void StopFrameBuffer()
         {
-            this.cancellationTokenSource.Dispose();
             this.isActive = false;
         }
 
@@ -51,7 +51,7 @@ namespace LedMatrix
         {
             if (this.isActive)
             {
-                this.frameBuffer.Add(pixels);
+                this.frameQueue.Enqueue(pixels);
                 return true;
             }
             else

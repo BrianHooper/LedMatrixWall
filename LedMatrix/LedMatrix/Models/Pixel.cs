@@ -12,13 +12,15 @@ namespace LedMatrix.Models
         public int Index { get; set; }
         public Color Color { get; set; }
 
-        public Pixel(int index)
+        public Pixel(int index, Color color)
         {
+            this.Color = color;
             Init(index);
         }
 
-        public Pixel(int x, int y)
+        public Pixel(int x, int y, Color color)
         {
+            this.Color = color;
             var panelRow = y / Constants.LedRowsPerNode;
             var panelColumn = x / Constants.LedColumnsPerNode;
             var nodeRow = y % Constants.LedRowsPerNode;
@@ -27,9 +29,18 @@ namespace LedMatrix.Models
             Init(panelRow, panelColumn, nodeRow, nodeColumn);
         }
 
-        public Pixel(int panelRow, int panelColumn, int nodeRow, int nodeColumn)
+        public Pixel(int panelRow, int panelColumn, int nodeRow, int nodeColumn, Color color)
         {
+            this.Color = color;
             Init(panelRow, panelColumn, nodeRow, nodeColumn);
+        }
+
+        public Pixel(byte[] data, int startIdx)
+        {
+            var span = data.AsSpan();
+            this.Index = BitConverter.ToInt32(span.Slice(startIdx, 4));
+            this.Color = Color.FromArgb(BitConverter.ToInt32(span.Slice(startIdx + 4, 4)));
+            Init(this.Index);
         }
 
         private void Init(int index)
@@ -62,14 +73,6 @@ namespace LedMatrix.Models
             var x = panelStartX + (this.NodeColumn * Constants.PixelWithSpacing);
             var y = panelStartY + (this.NodeRow * Constants.PixelWithSpacing);
             return (x, y);
-        }
-
-        public Pixel(byte[] data, int startIdx)
-        {
-            var span = data.AsSpan();
-            this.Index = BitConverter.ToInt32(span.Slice(startIdx, 4));
-            this.Color = Color.FromArgb(BitConverter.ToInt32(span.Slice(startIdx + 4, 4)));
-            Init(this.Index);
         }
 
         public byte[] EncodeAsByte()
