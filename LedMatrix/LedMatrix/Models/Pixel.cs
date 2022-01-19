@@ -5,6 +5,8 @@ namespace LedMatrix.Models
 {
     public class Pixel
     {
+
+
         public int PanelRow { get; set; }
         public int PanelColumn { get; set; }
         public int NodeRow { get; set; }
@@ -17,7 +19,6 @@ namespace LedMatrix.Models
             this.Color = color;
             Init(index);
         }
-
         public Pixel(int x, int y, Color color)
         {
             this.Color = color;

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Timers;
 
 namespace LedMatrix.Helpers
 {
@@ -91,6 +92,15 @@ namespace LedMatrix.Helpers
                 }
             }
             return pixels;
+        }
+
+        public static System.Timers.Timer StartTimer(int interval, ElapsedEventHandler eventHandler)
+        {
+            var timer = new System.Timers.Timer();
+            timer.Interval = Constants.MsPerFrame;
+            timer.Elapsed += eventHandler;
+            timer.Enabled = true;
+            return timer;
         }
     }
 }

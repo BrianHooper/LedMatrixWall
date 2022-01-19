@@ -19,6 +19,7 @@ namespace LedMatrix.Helpers
 
         public const int FrameBufferMaxSize = 1000;
         public const int FrameBufferWaitMs = 30;
+        public const int RunnerCancelTimeoutMs = 1000;
 
         // Simulator
         public const string ExecutablePath = @"C:\Users\brian\Documents\code\LedMatrixWall\LedMatrix\LedSimulator\bin\Debug\net6.0-windows\LedSimulator.exe";

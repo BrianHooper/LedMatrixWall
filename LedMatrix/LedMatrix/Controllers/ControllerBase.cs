@@ -10,21 +10,16 @@ namespace LedMatrix
         protected bool isActive;
 
         private FixedSizedQueue<List<Pixel>> frameQueue;
-        private System.Timers.Timer frameTimer;
 
         protected ControllerBase()
         {
             this.frameQueue = new FixedSizedQueue<List<Pixel>>(Constants.PixelBufferQueueLimit);
-            
-            this.frameTimer = new System.Timers.Timer();
-            this.frameTimer.Interval = Constants.MsPerFrame;
-            this.frameTimer.Elapsed += ProcessFrame;
-            this.frameTimer.Enabled = true;
+            var timer = Utility.StartTimer(Constants.MsPerFrame, ProcessFrame);
         }
 
         protected abstract void SendFrame(List<Pixel> pixels);
 
-        public void Clear()
+        public void ClearPanel()
         {
             var blankPixels = new List<Pixel>();
             for(int i = 0; i < Constants.TotalLeds; i++)
@@ -32,6 +27,11 @@ namespace LedMatrix
                 blankPixels.Add(new Pixel(i, Color.Black));
             }
             this.SendFrame(blankPixels);
+        }
+
+        public void ClearFrameQueue()
+        {
+            this.frameQueue.Clear();
         }
 
         private void ProcessFrame(Object? source, System.Timers.ElapsedEventArgs e)
@@ -48,6 +48,19 @@ namespace LedMatrix
         }
 
         public bool Paint(List<Pixel> pixels)
+        {
+            if (this.isActive)
+            {
+                this.frameQueue.EnqueueWithLimit(pixels);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool PaintWithBufferLimit(List<Pixel> pixels)
         {
             if (this.isActive)
             {

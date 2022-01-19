@@ -13,7 +13,7 @@ namespace LedMatrix.Helpers
             Size = size;
         }
 
-        public new void Enqueue(T obj)
+        public void EnqueueWithLimit(T obj)
         {
             base.Enqueue(obj);
             lock (syncObject)
