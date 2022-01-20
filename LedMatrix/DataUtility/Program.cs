@@ -14,8 +14,6 @@ namespace LedMatrix
             var destinationFolderName = "TestScene2";
             ConvertListOfFrameImages(sourceFramesFolder, destinationFolderName);
 
-
-
             Console.WriteLine("Done");
         }
 

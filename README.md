@@ -8,3 +8,6 @@
 # Installed the following packages from azure nuget feed:
     System.Device.Gpio v1.5.0
     Iot.Device.Bindings v1.5.0
+
+# Convert video to list of frames
+	ffmpeg.exe -i "C:\Users\brian\Documents\code\LedMatrixWall\LedMatrix\Data\BackBeautifulEider-mobile.mp4" frame_%0d.png

@@ -1,16 +1,27 @@
 ﻿using LedMatrix.Helpers;
+using Newtonsoft.Json;
 using System.Drawing;
-using System.Text.Json.Serialization;
 
 namespace LedMatrix.Models
 {
     public class Pixel
     {
+        [JsonProperty("PR")]
         public int PanelRow { get; set; }
+
+        [JsonProperty("PC")]
         public int PanelColumn { get; set; }
+
+        [JsonProperty("NR")]
         public int NodeRow { get; set; }
+
+        [JsonProperty("NC")]
         public int NodeColumn { get; set; }
+
+        [JsonProperty("I")]
         public int Index { get; set; }
+
+        [JsonProperty("C")]
         public Color Color { get; set; }
 
         [JsonConstructor]

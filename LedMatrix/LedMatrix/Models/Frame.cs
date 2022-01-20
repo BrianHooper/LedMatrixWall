@@ -1,11 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace LedMatrix.Models
 {
     public class Frame
     {
+        [JsonProperty("Px")]
         public List<Pixel> Pixels { get; set; }
 
+        [JsonProperty("FTS")]
         public int FramesToShow { get; set; }
 
 
