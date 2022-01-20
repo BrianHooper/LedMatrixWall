@@ -3,6 +3,7 @@
 	https://github.com/dotnet/iot#how-to-install
 	https://github.com/dotnet/core/blob/main/samples/RaspberryPiInstructions.md
 	https://learn.adafruit.com/retro-gaming-with-raspberry-pi/adding-controls-hardware
+	https://www.raspberryconnect.com/projects/65-raspberrypi-hotspot-accesspoints/158-raspberry-pi-auto-wifi-hotspot-switch-direct-connection
 
 # Installed the following packages from azure nuget feed:
     System.Device.Gpio v1.5.0

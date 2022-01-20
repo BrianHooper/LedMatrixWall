@@ -10,11 +10,14 @@ namespace LedMatrix.Runners
         private CancellationTokenSource? CancellationTokenSource { get; set; }
         private Thread? RunnerThread { get; set; }
 
+        protected int FrameQueueSizeLimit { get; private set; }
 
-        public RunnerBase(RunnerType runnerType, ControllerBase ledController)
+
+        public RunnerBase(RunnerType runnerType, ControllerBase ledController, int frameQueueSizeLimit)
         {
             this.RunnerType = runnerType;
             this.Controller = ledController;
+            this.FrameQueueSizeLimit = frameQueueSizeLimit;
         }
 
         public bool IsRunning()

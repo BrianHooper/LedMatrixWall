@@ -31,14 +31,14 @@ namespace LedMatrix
             this.isActive = true;
         }
 
-        protected override void SendFrame(List<Pixel> frame)
+        protected override void SendFrame(Frame frame)
         {
-            if (frame?.Count() != Constants.TotalLeds)
+            if (frame?.Pixels?.Count != Constants.TotalLeds)
             {
-                throw new ArgumentException($"Error, expected {Constants.TotalLeds} pixels, got {frame?.Count()}");
+                throw new ArgumentException($"Error, expected {Constants.TotalLeds} pixels, got {frame?.Pixels?.Count}");
             }
 
-            foreach (var pixel in frame)
+            foreach (var pixel in frame.Pixels)
             {
                 this.deviceImage.SetPixel(pixel.Index, 0, pixel.Color);
             }

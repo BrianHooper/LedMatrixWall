@@ -114,17 +114,7 @@ namespace LedMatrix.Helpers
             return current;
         }
 
-        public List<Color> NextFrame()
-        {
-            var frame = new List<Color>();
-            for (int j = 0; j < Constants.TotalLeds; j++)
-            {
-                frame.Add(this.Next());
-            }
-            return frame;
-        }
-
-        public List<Pixel> NextPixelFrame()
+        public Frame NextPixelFrame()
         {
             var pixels = new List<Pixel>();
             for (int i = 0; i < Constants.TotalLeds; i++)
@@ -132,7 +122,7 @@ namespace LedMatrix.Helpers
                 var pixel = new Pixel(i, this.Next());
                 pixels.Add(pixel);
             }
-            return pixels;
+            return new Frame(pixels);
         }
     }
 }

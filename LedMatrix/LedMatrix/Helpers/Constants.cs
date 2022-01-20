@@ -20,6 +20,9 @@ namespace LedMatrix.Helpers
         public const int FrameBufferMaxSize = 1000;
         public const int FrameBufferWaitMs = 30;
         public const int RunnerCancelTimeoutMs = 1000;
+        public const int RealTimeQueueLimit = 5;
+        public const int DeferredQueueLimit = 100;
+
 
         // Simulator
         public const string ExecutablePath = @"C:\Users\brian\Documents\code\LedMatrixWall\LedMatrix\LedSimulator\bin\Debug\net6.0-windows\LedSimulator.exe";
@@ -28,7 +31,7 @@ namespace LedMatrix.Helpers
         public const int PixelWithSpacing = PixelDiameter + PixelSpacing;
         public const int PanelPixelWidth = LedColumnsPerNode * (PixelDiameter + PixelSpacing);
         public const int PanelPixelHeight = LedRowsPerNode * (PixelDiameter + PixelSpacing);
-        public const int PixelBufferQueueLimit = 5;
+        public const int FrameBufferQueueLimit = 5;
         public const int ServerPort = 11113; 
         public const int FramesPerSecond = 20;
         public const int MsPerFrame = 1000 / FramesPerSecond;

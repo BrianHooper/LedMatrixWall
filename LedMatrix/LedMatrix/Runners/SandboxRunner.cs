@@ -4,14 +4,14 @@ namespace LedMatrix.Runners
 {
     public class SandboxRunner : RunnerBase
     {
-        public SandboxRunner(ControllerBase ledController) : base(RunnerType.SandboxRunner, ledController)
+        public SandboxRunner(ControllerBase ledController) : base(RunnerType.SandboxRunner, ledController, Constants.DeferredQueueLimit)
         {
         }
 
         private void ShowImage()
         {
-            var pixels = Utility.ConvertFromImage(@"C:\Users\brian\Pictures\DaddyIssues.jpg");
-            this.Controller.Paint(pixels);
+            var frame = Utility.ConvertFromImage(@"C:\Users\brian\Pictures\DaddyIssues.jpg");
+            this.Controller.Paint(frame);
         }
 
         private void ShowColorLoop(CancellationToken cancellationToken)

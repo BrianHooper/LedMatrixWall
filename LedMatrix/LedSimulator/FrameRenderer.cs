@@ -17,7 +17,7 @@ namespace LedSimulator
             InitializeComponent();
             this.Show();
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.pixelQueue = new FixedSizedQueue<List<Pixel>>(Constants.PixelBufferQueueLimit);
+            this.pixelQueue = new FixedSizedQueue<List<Pixel>>(Constants.FrameBufferQueueLimit);
             this.pixels = new List<Pixel>();
 
             this.stringFormat = new StringFormat()
