@@ -14,7 +14,7 @@ namespace LedMatrix
         protected ControllerBase()
         {
             this.frameQueue = new FixedSizedQueue<Frame>(Constants.FrameBufferQueueLimit);
-            var timer = Utility.StartTimer(Constants.MsPerFrame, ProcessFrame);
+            var timer = Utility.StartTimer(5, ProcessFrame); // Constants.MsPerFrame
         }
 
         protected abstract void SendFrame(Frame frame);
@@ -24,7 +24,7 @@ namespace LedMatrix
             var blankPixels = new List<Pixel>();
             for(int i = 0; i < Constants.TotalLeds; i++)
             {
-                blankPixels.Add(new Pixel(i, Color.Black));
+                blankPixels.Add(Pixel.FromIndexAndColor(i, Color.Black));
             }
             this.SendFrame(new Frame(blankPixels));
         }

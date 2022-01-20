@@ -1,4 +1,5 @@
 ﻿using LedMatrix.Models;
+using Newtonsoft.Json;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -23,7 +24,7 @@ namespace LedMatrix.Helpers
             var dataSize = length * 8 + 4;
             for (int i = 4; i < dataSize; i += 8)
             {
-                pixels.Add(new Pixel(data, i));
+                pixels.Add(Pixel.FromByte(data, i));
             }
             return pixels;
         }
@@ -59,7 +60,7 @@ namespace LedMatrix.Helpers
             {
                 for (int y = 0; y < height; y++)
                 {
-                    var pixel = new Pixel(x, y, destImage.GetPixel(x, y));
+                    var pixel = Pixel.FromXYAndColor(x, y, destImage.GetPixel(x, y));
                     pixels.Add(pixel);
                 }
             }
@@ -73,6 +74,46 @@ namespace LedMatrix.Helpers
             timer.Elapsed += eventHandler;
             timer.Enabled = true;
             return timer;
+        }
+
+        public static Frame? LoadFrameFromFile(string filePath)
+        {
+            string frameStr;
+
+            try
+            {
+                frameStr = File.ReadAllText(filePath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Frame read exception : {0}", ex.ToString());
+                return null;
+            }
+
+            try
+            {
+                var frame = JsonConvert.DeserializeObject<Frame>(frameStr);
+                return frame;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Frame deserialize exception : {0}", ex.ToString());
+                return null;
+            }
+        }
+
+        public static void WriteFrameToFile(Frame frame, string filePath)
+        {
+            try
+            {
+                var frameStr = JsonConvert.SerializeObject(frame);
+                File.WriteAllText(filePath, frameStr);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Frame serialize exception : {0}", ex.ToString());
+            }
+
         }
     }
 }

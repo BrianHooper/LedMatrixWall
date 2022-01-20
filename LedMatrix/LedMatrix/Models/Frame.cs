@@ -1,4 +1,6 @@
-﻿namespace LedMatrix.Models
+﻿using System.Text.Json.Serialization;
+
+namespace LedMatrix.Models
 {
     public class Frame
     {
@@ -6,10 +8,12 @@
 
         public int FramesToShow { get; set; }
 
-        public Frame(List<Pixel> pixels, int framesToShow = 1)
+
+        [JsonConstructor]
+        public Frame(List<Pixel> pixels)
         {
             this.Pixels = pixels;
-            this.FramesToShow = framesToShow;
+            this.FramesToShow = 1;
         }
 
         public List<Pixel> Show()

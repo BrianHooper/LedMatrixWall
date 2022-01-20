@@ -58,7 +58,7 @@ namespace LedMatrix.Controllers
             }
         }
 
-        protected override void SendFrame(List<Pixel> frame)
+        protected override void SendFrame(Frame frame)
         {
             if (frame != null && this.dataSender?.Connected == true)
             {

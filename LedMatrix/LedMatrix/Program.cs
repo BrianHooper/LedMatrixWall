@@ -28,7 +28,7 @@ namespace LedMatrix
             while(true)
             {
                 this.RunnerSelectorHandler();
-                Thread.Sleep(Constants.MsPerFrame);
+                Thread.Sleep(5); // Constants.MsPerFrame
             }
         }
 

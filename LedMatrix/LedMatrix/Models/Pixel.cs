@@ -1,12 +1,11 @@
 ﻿using LedMatrix.Helpers;
 using System.Drawing;
+using System.Text.Json.Serialization;
 
 namespace LedMatrix.Models
 {
     public class Pixel
     {
-
-
         public int PanelRow { get; set; }
         public int PanelColumn { get; set; }
         public int NodeRow { get; set; }
@@ -14,34 +13,46 @@ namespace LedMatrix.Models
         public int Index { get; set; }
         public Color Color { get; set; }
 
-        public Pixel(int index, Color color)
+        [JsonConstructor]
+        public Pixel(int index, int panelRow, int panelColumn, int nodeRow, int nodeColumn, Color color)
         {
+            this.Index = index;
+            this.PanelRow = panelRow;
+            this.PanelColumn = panelColumn;
+            this.NodeRow = nodeRow;
+            this.NodeColumn = nodeColumn;
             this.Color = color;
-            Init(index);
         }
-        public Pixel(int x, int y, Color color)
+        
+        public static Pixel FromIndexAndColor(int index, Color color)
         {
-            this.Color = color;
+            var pixel = new Pixel(index, 0, 0, 0, 0, color);
+            pixel.Init(index);
+            return pixel;
+        }
+        
+        public static Pixel FromXYAndColor(int x, int y, Color color)
+        {
             var panelRow = y / Constants.LedRowsPerNode;
             var panelColumn = x / Constants.LedColumnsPerNode;
             var nodeRow = y % Constants.LedRowsPerNode;
             var nodeColumn = x % Constants.LedColumnsPerNode;
-
-            Init(panelRow, panelColumn, nodeRow, nodeColumn);
+            return FromPanelLocationAndColor(panelRow, panelColumn, nodeRow, nodeColumn, color);
         }
 
-        public Pixel(int panelRow, int panelColumn, int nodeRow, int nodeColumn, Color color)
+        public static Pixel FromPanelLocationAndColor(int panelRow, int panelColumn, int nodeRow, int nodeColumn, Color color)
         {
-            this.Color = color;
-            Init(panelRow, panelColumn, nodeRow, nodeColumn);
+            var pixel = new Pixel(0, panelRow, panelColumn, nodeRow, nodeColumn, color);
+            pixel.Init(panelRow, panelColumn, nodeRow, nodeColumn);
+            return pixel;
         }
 
-        public Pixel(byte[] data, int startIdx)
+        public static Pixel FromByte(byte[] data, int startIdx)
         {
             var span = data.AsSpan();
-            this.Index = BitConverter.ToInt32(span.Slice(startIdx, 4));
-            this.Color = Color.FromArgb(BitConverter.ToInt32(span.Slice(startIdx + 4, 4)));
-            Init(this.Index);
+            var index = BitConverter.ToInt32(span.Slice(startIdx, 4));
+            var color = Color.FromArgb(BitConverter.ToInt32(span.Slice(startIdx + 4, 4)));
+            return FromIndexAndColor(index, color);
         }
 
         private void Init(int index)

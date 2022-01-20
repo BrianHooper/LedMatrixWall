@@ -27,7 +27,7 @@ namespace LedSimulator
             };
 
             var timer = new System.Windows.Forms.Timer();
-            timer.Interval = Constants.MsPerFrame;
+            timer.Interval = 50;
             timer.Tick += new EventHandler(TimerTick);
             timer.Start();
         }

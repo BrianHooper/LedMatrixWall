@@ -119,7 +119,7 @@ namespace LedMatrix.Helpers
             var pixels = new List<Pixel>();
             for (int i = 0; i < Constants.TotalLeds; i++)
             {
-                var pixel = new Pixel(i, this.Next());
+                var pixel = Pixel.FromIndexAndColor(i, this.Next());
                 pixels.Add(pixel);
             }
             return new Frame(pixels);

@@ -10,18 +10,41 @@ namespace LedMatrix
     {
         public static void Main(string[] args)
         {
-            var frame = new List<Pixel>();
-            for (int i = 0; i < Constants.TotalLeds; i++)
+            var sourceFramesFolder = @"C:\Users\brian\Documents\code\LedMatrixWall\LedMatrix\Data\CountdownFrames";
+            var destinationFolderName = "TestScene2";
+            ConvertListOfFrameImages(sourceFramesFolder, destinationFolderName);
+
+
+
+            Console.WriteLine("Done");
+        }
+
+        public static void ConvertListOfFrameImages(string sourceFolder, string destinationFolderName)
+        {
+            if (!Directory.Exists(sourceFolder))
             {
-                frame.Add(new Pixel(i, Color.FromArgb(255, 219, 42, 42)));
+                Console.WriteLine($"Error: unable to find source directory {sourceFolder}");
+                return;
             }
 
-            JsonSerializer serializer = new JsonSerializer();
-            serializer.NullValueHandling = NullValueHandling.Ignore;
-            using (StreamWriter sw = new StreamWriter(@"SerializedTestFrame.json"))
-            using (JsonWriter writer = new JsonTextWriter(sw))
+            var destinationFolder = Path.Combine(Constants.ScenesDirectory, destinationFolderName);
+            if (!Directory.Exists(destinationFolder))
             {
-                serializer.Serialize(writer, frame);
+                Directory.CreateDirectory(destinationFolder);
+            }
+
+            if (!Directory.Exists(destinationFolder))
+            {
+                Console.WriteLine($"Error: unable to create directory {destinationFolder}");
+                return;
+            }
+
+            foreach(var framePath in Directory.GetFiles(sourceFolder))
+            {
+                var frame = Utility.ConvertFromImage(framePath);
+                var frameName = Path.GetFileNameWithoutExtension(framePath) + ".frm";
+                var destination = Path.Combine(destinationFolder, frameName);
+                Utility.WriteFrameToFile(frame, destination);
             }
         }
 
@@ -41,7 +64,7 @@ namespace LedMatrix
                 var frame = new List<Pixel>();
                 for (int j = 0; j < Constants.TotalLeds; j++)
                 {
-                    frame.Add(new Pixel(j, Color.Black));
+                    frame.Add(Pixel.FromIndexAndColor(j, Color.Black));
                 }
             }
         }

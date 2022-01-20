@@ -8,9 +8,6 @@ namespace LedSimulator
 {
     internal static class Program
     {
-        private const int FPS = 10;
-
-
         [STAThread]
         static void Main()
         {
@@ -25,23 +22,6 @@ namespace LedSimulator
 
             Application.Run(frameListener);
             cts.Cancel();
-        }
-
-        static void QueueSender(CancellationToken ct, FrameRenderer renderer)
-        {
-            if (renderer == null)
-            {
-                return;
-            }
-            var msPerFrame = 1000 / FPS;
-
-            var colorLoop = new ColorLoop();
-            while (!ct.IsCancellationRequested)
-            {
-                var pixels = colorLoop.NextPixelFrame();
-                renderer.SendFrame(pixels);
-                Thread.Sleep(msPerFrame);
-            }
         }
 
         public static void StartListening(CancellationToken ct, FrameRenderer renderer)
