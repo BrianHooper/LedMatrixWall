@@ -1,6 +1,4 @@
-#include "LedDriver.h"
-
-void pride() 
+void pride(CRGB* leds, int* led_positions) 
 {
     static uint16_t sPseudotime = 0;
     static uint16_t sLastMillis = 0;
@@ -34,10 +32,9 @@ void pride()
 
         CRGB newcolor = CHSV( hue8, sat8, bri8);
 
-        uint16_t pixelnumber = GridIndexToPanelPositions(i);
+        uint16_t pixelnumber = led_positions[i];
         //pixelnumber = (NUM_LEDS-1) - pixelnumber;
 
         nblend( leds[pixelnumber], newcolor, 64);
     }
-    FastLED.show();  
 }
